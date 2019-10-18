@@ -13,7 +13,7 @@ class NotFoundPage extends React.Component {
           >
             &times;
           </button>
-          <strong>Không Tìm Thấy Trang</strong>
+          <strong>404 - Không Tìm Thấy Trang</strong>
         </div>
       </div>
     );
