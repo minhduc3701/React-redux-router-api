@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import ProductList from "./../../components/ProductList/ProductList";
 import ProductItem from "./../../components/ProductItem/ProductItem";
 import callApi from "./../../utils/apiCaller";
+import * as Actions from "./../../actions/index";
 
 class ProductListPage extends React.Component {
   constructor(props) {
@@ -15,11 +16,7 @@ class ProductListPage extends React.Component {
   }
 
   componentDidMount() {
-    callApi("products", null).then(res => {
-      this.setState({
-        products: res.data
-      });
-    });
+    this.props.fetchAllProducts();
   }
 
   showProducts = products => {
@@ -69,8 +66,7 @@ class ProductListPage extends React.Component {
   };
 
   render() {
-    // let { products } = this.props;
-    let { products } = this.state;
+    let { products } = this.props;
     return (
       <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <Link to="/product/add" className="btn btn-info mb-10">
@@ -88,7 +84,15 @@ const mapStateToProps = state => {
   };
 };
 
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    fetchAllProducts: () => {
+      dispatch(Actions.actFetchProductsRequest());
+    }
+  };
+};
+
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(ProductListPage);
