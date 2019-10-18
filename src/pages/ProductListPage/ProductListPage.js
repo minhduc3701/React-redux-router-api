@@ -28,6 +28,7 @@ class ProductListPage extends React.Component {
       result = products.map((product, index) => {
         return (
           <ProductItem
+            onDelete={this.onDelete}
             key={index}
             index={index}
             product={product}
@@ -35,6 +36,35 @@ class ProductListPage extends React.Component {
         );
       });
     }
+    return result;
+  };
+
+  onDelete = id => {
+    let { products } = this.state;
+    callApi(`products/${id}`, "DELETE", null).then(res => {
+      if (res.status === 200) {
+        let index = this.findIndex(products, id);
+        if (index !== -1) {
+          products.splice(index, 1);
+          this.setState({
+            products: products
+          });
+        }
+      }
+    });
+  };
+
+  findIndex = (products, id) => {
+    let result = -1;
+    // for (let i = 0; i < products.length; i++) {
+    //   if (products[i].id === id) {
+    //     result = i;
+    //     break;
+    //   }
+    // }
+    products.forEach((product, index) => {
+      if (product.id === id) result = index;
+    });
     return result;
   };
 
