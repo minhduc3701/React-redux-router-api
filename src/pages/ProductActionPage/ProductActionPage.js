@@ -13,6 +13,22 @@ class ProductActionPage extends React.Component {
     };
   }
 
+  componentDidMount() {
+    let { match } = this.props;
+    if (match) {
+      let id = match.params.id;
+      callApi(`products/${id}`, "GET", null).then(res => {
+        let data = res.data;
+        this.setState({
+          id: data.id,
+          txtName: data.name,
+          txtPrice: data.price,
+          chkbStatus: data.status
+        });
+      });
+    }
+  }
+
   onChange = e => {
     let target = e.target;
     let name = target.name;
@@ -24,16 +40,26 @@ class ProductActionPage extends React.Component {
 
   onSave = e => {
     e.preventDefault();
-    let { txtName, txtPrice, chkbStatus } = this.state;
+    let { id, txtName, txtPrice, chkbStatus } = this.state;
     let { history } = this.props;
-    callApi("products", "POST", {
-      name: txtName,
-      price: txtPrice,
-      status: chkbStatus
-    }).then(res => {
-      history.goBack(); //tro lai trang truoc do (-1)
-      //hoac dung history.push("/product/list") de ve trang chi dinh
-    });
+    if (id) {
+      callApi(`products/${id}`, "PUT", {
+        name: txtName,
+        price: txtPrice,
+        status: chkbStatus
+      }).then(res => {
+        history.goBack();
+      });
+    } else {
+      callApi("products", "POST", {
+        name: txtName,
+        price: txtPrice,
+        status: chkbStatus
+      }).then(res => {
+        history.goBack(); //tro lai trang truoc do (-1)
+        //hoac dung history.push("/product/list") de ve trang chi dinh
+      });
+    }
   };
 
   render() {
@@ -49,7 +75,7 @@ class ProductActionPage extends React.Component {
               type="text"
               className="form-control"
               name="txtName"
-              placeholder="Input field"
+              placeholder="Nhập Tên Sản Phẩm"
               value={txtName}
               onChange={this.onChange}
             ></input>
@@ -60,7 +86,7 @@ class ProductActionPage extends React.Component {
               type="text"
               className="form-control"
               name="txtPrice"
-              placeholder="Input field"
+              placeholder="Nhập Giá Sản Phẩm"
               value={txtPrice}
               onChange={this.onChange}
             ></input>
@@ -74,6 +100,7 @@ class ProductActionPage extends React.Component {
                   name="chkbStatus"
                   value={chkbStatus}
                   onChange={this.onChange}
+                  checked={chkbStatus}
                 />
                 Còn Hàng
               </label>
