@@ -21,14 +21,18 @@ class ProductActionPage extends React.Component {
     let { match } = this.props;
     if (match) {
       let id = match.params.id;
-      callApi(`products/${id}`, "GET", null).then(res => {
-        let data = res.data;
-        this.setState({
-          id: data.id,
-          txtName: data.name,
-          txtPrice: data.price,
-          chkbStatus: data.status
-        });
+      this.props.onEditProduct(id);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.itemEditting) {
+      let { itemEditting } = nextProps;
+      this.setState({
+        id: itemEditting.id,
+        txtName: itemEditting.name,
+        txtPrice: itemEditting.price,
+        chkbStatus: itemEditting.status
       });
     }
   }
@@ -53,18 +57,13 @@ class ProductActionPage extends React.Component {
       status: chkbStatus
     };
     if (id) {
-      callApi(`products/${id}`, "PUT", {
-        name: txtName,
-        price: txtPrice,
-        status: chkbStatus
-      }).then(res => {
-        history.goBack();
-      });
+      this.props.onUpdateProduct(product);
     } else {
       this.props.onAddProduct(product);
-      history.goBack(); //tro lai trang truoc do (-1)
-      //hoac dung history.push("/product/list") de ve trang chi dinh
     }
+    history.goBack();
+    //tro lai trang truoc do (-1)
+    //hoac dung history.push("/product/list") de ve trang chi dinh
   };
 
   render() {
@@ -123,16 +122,27 @@ class ProductActionPage extends React.Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    itemEditting: state.itemEditting
+  };
+};
 
 const mapDispatchToProps = (dispatch, props) => {
   return {
     onAddProduct: product => {
       dispatch(Actions.actAddProductRequest(product));
+    },
+    onEditProduct: id => {
+      dispatch(Actions.actGetProductRequest(id));
+    },
+    onUpdateProduct: product => {
+      dispatch(Actions.actUpdateProductRequest(product));
     }
   };
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ProductActionPage);
