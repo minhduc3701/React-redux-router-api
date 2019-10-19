@@ -1,6 +1,10 @@
 import React from "react";
-import callApi from "./../../utils/apiCaller";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+
+import callApi from "./../../utils/apiCaller";
+import * as Actions from "./../../actions/index";
+import products from "../../reducers/products";
 
 class ProductActionPage extends React.Component {
   constructor(props) {
@@ -42,6 +46,12 @@ class ProductActionPage extends React.Component {
     e.preventDefault();
     let { id, txtName, txtPrice, chkbStatus } = this.state;
     let { history } = this.props;
+    let product = {
+      id: id,
+      name: txtName,
+      price: txtPrice,
+      status: chkbStatus
+    };
     if (id) {
       callApi(`products/${id}`, "PUT", {
         name: txtName,
@@ -51,14 +61,9 @@ class ProductActionPage extends React.Component {
         history.goBack();
       });
     } else {
-      callApi("products", "POST", {
-        name: txtName,
-        price: txtPrice,
-        status: chkbStatus
-      }).then(res => {
-        history.goBack(); //tro lai trang truoc do (-1)
-        //hoac dung history.push("/product/list") de ve trang chi dinh
-      });
+      this.props.onAddProduct(product);
+      history.goBack(); //tro lai trang truoc do (-1)
+      //hoac dung history.push("/product/list") de ve trang chi dinh
     }
   };
 
@@ -119,4 +124,15 @@ class ProductActionPage extends React.Component {
   }
 }
 
-export default ProductActionPage;
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onAddProduct: product => {
+      dispatch(Actions.actAddProductRequest(product));
+    }
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(ProductActionPage);

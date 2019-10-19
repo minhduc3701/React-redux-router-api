@@ -14,21 +14,38 @@ export const actFetchProductsRequest = () => {
     });
   };
 };
-export const actADDProduct = products => {
+
+export const actAddProduct = product => {
   return {
     type: Types.ADD_PRODUCT,
-    products
+    product
   };
 };
+export const actAddProductRequest = product => {
+  return dispatch => {
+    return callApi(`products`, "POST", product).then(res => {
+      dispatch(actAddProduct(res.data));
+    });
+  };
+};
+
 export const actUpdateProduct = products => {
   return {
     type: Types.UPDATE_PRODUCT,
     products
   };
 };
-export const actDeleteProduct = products => {
+
+export const actDeleteProduct = id => {
   return {
     type: Types.DELETE_PRODUCT,
-    products
+    id
+  };
+};
+export const actDeleteProductRequest = id => {
+  return dispatch => {
+    return callApi(`products/${id}`, "DELETE", null).then(res => {
+      dispatch(actDeleteProduct(id));
+    });
   };
 };
