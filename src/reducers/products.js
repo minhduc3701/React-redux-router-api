@@ -1,5 +1,4 @@
 import * as Types from "../constants/ActionTypes";
-import { stat } from "fs";
 
 let findIndex = (products, id) => {
   let result = -1;

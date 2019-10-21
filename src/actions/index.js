@@ -1,6 +1,5 @@
 import * as Types from "../constants/ActionTypes";
 import callApi from "./../utils/apiCaller";
-import products from "../reducers/products";
 
 export const actFetchProducts = products => {
   return {
